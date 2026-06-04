@@ -523,7 +523,15 @@ onValue(ref(db, '/'), (snapshot) => {
       // Session restored from sessionStorage — enter the app now that data is loaded
       enterApp();
     } else {
-      // Already in app — re-render current tab
+      // Always sync isAdmin from live Firebase data (handles manual Firebase console changes)
+      const prevAdmin = isAdmin;
+      isAdmin = shared.users[currentUser].isAdmin || false;
+      sessionStorage.setItem('wk2026_admin', isAdmin ? '1' : '0');
+      if (isAdmin !== prevAdmin) {
+        // Admin status changed — update tab visibility
+        document.getElementById('adminTab').style.display = isAdmin ? '' : 'none';
+      }
+      // Re-render current tab
       const activeTab = document.querySelector('.tab.active');
       if (activeTab) {
         const tabText = activeTab.textContent.trim().toLowerCase();

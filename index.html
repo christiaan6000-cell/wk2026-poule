@@ -517,19 +517,26 @@ onValue(ref(db, '/'), (snapshot) => {
   }
 
   // Re-render active tab if logged in
-  if (currentUser) {
-    const activeTab = document.querySelector('.tab.active');
-    if (activeTab) {
-      const tabText = activeTab.textContent.trim().toLowerCase();
-      let tab = null;
-      if (tabText.includes('predict')) tab = 'predictions';
-      else if (tabText.includes('bonus')) tab = 'bonus';
-      else if (tabText.includes('stand') || tabText.includes('rang')) tab = 'ranking';
-      else if (tabText.includes('admin') || tabText.includes('beh')) tab = 'admin';
-      if (tab === 'predictions') { renderMatches(); updateStats(); }
-      else if (tab === 'bonus') renderBonus();
-      else if (tab === 'ranking') renderRanking();
-      else if (tab === 'admin') { renderAdminKnockout(); renderAdminGroupMatches(); renderAdminUsers(); renderShareInfo(); renderAdminBonus(); }
+  if (currentUser && shared.users[currentUser]) {
+    const appScreen = document.getElementById('app');
+    if (!appScreen.classList.contains('active')) {
+      // Session restored from sessionStorage — enter the app now that data is loaded
+      enterApp();
+    } else {
+      // Already in app — re-render current tab
+      const activeTab = document.querySelector('.tab.active');
+      if (activeTab) {
+        const tabText = activeTab.textContent.trim().toLowerCase();
+        let tab = null;
+        if (tabText.includes('predict')) tab = 'predictions';
+        else if (tabText.includes('bonus')) tab = 'bonus';
+        else if (tabText.includes('stand')) tab = 'ranking';
+        else if (tabText.includes('admin')) tab = 'admin';
+        if (tab === 'predictions') { renderMatches(); updateStats(); }
+        else if (tab === 'bonus') renderBonus();
+        else if (tab === 'ranking') renderRanking();
+        else if (tab === 'admin') { renderAdminKnockout(); renderAdminGroupMatches(); renderAdminUsers(); renderShareInfo(); renderAdminBonus(); }
+      }
     }
   }
 });
@@ -635,8 +642,8 @@ window.showTab = function(tab) {
   });
   document.getElementById('tab-'+tab).style.display = '';
   document.querySelectorAll('.tab').forEach(t => {
-    const map = {predictions:'voor', bonus:'bonus', ranking:'rang', admin:'beh'};
-    if (t.textContent.toLowerCase().includes(map[tab])) t.classList.add('active');
+    const mapEN = {predictions:'predict', bonus:'bonus', ranking:'stand', admin:'admin'};
+    if (t.textContent.toLowerCase().includes(mapEN[tab])) t.classList.add('active');
   });
   if (tab === 'predictions') renderMatches();
   if (tab === 'bonus') renderBonus();
@@ -1014,12 +1021,13 @@ window.resetPoule = async function() {
 // ---- SESSION RESTORE ----
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 
-// Restore session after Firebase loads (handled in onValue)
+// Restore session - wait for Firebase data to load
 const savedUser = sessionStorage.getItem('wk2026_user');
 const savedAdmin = sessionStorage.getItem('wk2026_admin');
 if (savedUser) {
   currentUser = savedUser;
   isAdmin = savedAdmin === '1';
+  // enterApp() will be called once Firebase data arrives in the onValue listener
 }
 </script>
 </body>

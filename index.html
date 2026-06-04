@@ -240,7 +240,7 @@
       ⏳ Bonus questions are closed — the first match has started.
     </div>
     <div id="bonusOpenNotice" class="notice notice-blue" style="margin-bottom:20px">
-      Answer the bonus questions before June 11 (first match). After that they will be closed.
+      ⏳ Answer the bonus questions before <strong>June 11</strong> — they close automatically when the tournament starts.
     </div>
     <div id="bonusQuestions"></div>
   </div>
@@ -617,8 +617,41 @@ function availableMatches() {
   return [...GROUP_MATCHES, ...KNOCKOUT_MATCHES.filter(m => isKOOpen(m))];
 }
 
+// Locking dates per round
+function isMatchLocked(matchId) {
+  const now = new Date();
+  // Group stage (ids 1-72): lock June 11 2026 00:00 UTC
+  if (matchId <= 72) {
+    return now >= new Date('2026-06-11T00:00:00Z');
+  }
+  // Knockout rounds lock at start of each round (UTC midnight)
+  // Round of 32 (ids 73-88): lock June 28
+  if (matchId <= 88) return now >= new Date('2026-06-28T00:00:00Z');
+  // Round of 16 (ids 89-96): lock July 4
+  if (matchId <= 96) return now >= new Date('2026-07-04T00:00:00Z');
+  // Quarter-finals (ids 97-100): lock July 9
+  if (matchId <= 100) return now >= new Date('2026-07-09T00:00:00Z');
+  // Semi-finals (ids 101-102): lock July 14
+  if (matchId <= 102) return now >= new Date('2026-07-14T00:00:00Z');
+  // Third place (id 103): lock July 18
+  if (matchId <= 103) return now >= new Date('2026-07-18T00:00:00Z');
+  // Final (id 104): lock July 19
+  return now >= new Date('2026-07-19T00:00:00Z');
+}
+
+function lockLabel(matchId) {
+  if (matchId <= 72) return '🔒 Locked — group stage deadline passed';
+  if (matchId <= 88) return '🔒 Locked — Round of 32 started';
+  if (matchId <= 96) return '🔒 Locked — Round of 16 started';
+  if (matchId <= 100) return '🔒 Locked — Quarter-finals started';
+  if (matchId <= 102) return '🔒 Locked — Semi-finals started';
+  if (matchId <= 103) return '🔒 Locked — Third place match started';
+  return '🔒 Locked — Final started';
+}
+
 window.setPick = async function(matchId, pick) {
   if (shared.results[matchId]) { alert("This match has already been played."); return; }
+  if (isMatchLocked(matchId)) { alert("Predictions for this round are now locked."); return; }
   await fbSet(`/picks/${currentUser}/${matchId}`, pick);
 }
 
@@ -657,7 +690,7 @@ function renderMatches() {
       }
       const pick = myPicks[m.id];
       const result = shared.results[m.id];
-      const locked = !!result;
+      const locked = !!result || isMatchLocked(m.id);
       let correct = null;
       if (result && pick) correct = pick === result;
       const home = km.home || m.home;
@@ -671,7 +704,7 @@ function renderMatches() {
       html += `<button class="pick-btn${pick==='x'?' selected-x':''}" ${locked?'disabled':''} onclick="setPick(${m.id},'x')">Draw</button>`;
       html += `<button class="pick-btn${pick==='2'?' selected-2':''}" ${locked?'disabled':''} onclick="setPick(${m.id},'2')">${away} wins</button>`;
       html += `</div>`;
-      if (locked && !pick) html += `<div class="locked-tag">No prediction entered</div>`;
+      if (locked && !pick) html += `<div class="locked-tag">${result ? 'No prediction entered' : lockLabel(m.id)}</div>`;
       if (correct !== null) html += `<div class="correct-tag ${correct?'yes':'no'}">${correct?'✓ Correct':'✗ Wrong'}</div>`;
       html += `</div>`;
     });

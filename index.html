@@ -816,7 +816,8 @@ function calcBonusPoints(userKey) {
       });
       if (Math.abs(userVal - target) === minDiff) pts += q.points;
     } else {
-      if (ans.trim().toLowerCase() === correct.trim().toLowerCase()) pts += q.points;
+      const variants = correct.split(',').map(v => v.trim().toLowerCase());
+      if (variants.includes(ans.trim().toLowerCase())) pts += q.points;
     }
   });
   return pts;
@@ -851,8 +852,10 @@ function renderBonus() {
         const won = myAns && myDiff === minDiff;
         statusHtml = `<div class="correct-tag ${won?'yes':'no'}" style="margin-top:6px">${won?'✓ Closest! +'+q.points+' pt':'✗ Not closest · Answer: '+correct}</div>`;
       } else {
-        const ok = myAns && myAns.trim().toLowerCase() === correct.trim().toLowerCase();
-        statusHtml = `<div class="correct-tag ${ok?'yes':'no'}" style="margin-top:6px">${ok?'✓ Correct! +'+q.points+' pt':'✗ Wrong · Antwoord: '+correct}</div>`;
+        const variants = correct.split(',').map(v => v.trim().toLowerCase());
+        const ok = myAns && variants.includes(myAns.trim().toLowerCase());
+        const displayAnswer = correct.split(',').map(v => v.trim()).join(' / ');
+        statusHtml = `<div class="correct-tag ${ok?'yes':'no'}" style="margin-top:6px">${ok?'✓ Correct! +'+q.points+' pt':'✗ Wrong · Answer: '+displayAnswer}</div>`;
       }
     }
     html += `<div class="match-card" style="margin-bottom:12px">`;
@@ -1005,12 +1008,29 @@ function renderAdminBonus() {
   html += `</div>`;
   BONUS_QUESTIONS.forEach(q => {
     const correct = shared.bonusCorrect[q.id] || '';
-    html += `<div class="result-row" style="flex-wrap:wrap;gap:10px;margin-bottom:8px">`;
+
+    // Collect all participant answers for this question
+    const allAnswers = Object.keys(shared.users).map(k => {
+      const ans = (shared.bonusAnswers[k] || {})[q.id] || '';
+      return ans ? `<span style="background:var(--gray-light);padding:2px 7px;border-radius:4px;font-size:0.78rem">${shared.users[k].name}: <strong>${ans}</strong></span>` : null;
+    }).filter(Boolean);
+
+    html += `<div class="result-row" style="flex-direction:column;gap:8px;margin-bottom:12px">`;
+    html += `<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">`;
     html += `<div style="flex:1;min-width:160px;font-size:0.88rem;font-weight:500">${q.label} <span style="color:var(--text-muted);font-weight:400">(+${q.points} pt)</span></div>`;
-    html += `<input type="${q.type}" value="${correct}" placeholder="Enter correct answer"
-      style="flex:1;min-width:140px;padding:7px 10px;border:1.5px solid var(--gray-border);border-radius:7px;font-size:0.85rem;outline:none"
+    html += `<input type="text" value="${correct}" placeholder="Enter correct answer(s), comma-separated"
+      style="flex:2;min-width:200px;padding:7px 10px;border:1.5px solid var(--gray-border);border-radius:7px;font-size:0.85rem;outline:none"
       oninput="setBonusCorrect('${q.id}', this.value)"
       onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--gray-border)'" />`;
+    html += `</div>`;
+    if (allAnswers.length > 0) {
+      html += `<div style="display:flex;gap:6px;flex-wrap:wrap;padding:4px 0 2px 0">`;
+      html += `<span style="font-size:0.75rem;color:var(--text-muted);align-self:center">Answers:</span>`;
+      html += allAnswers.join(' ');
+      html += `</div>`;
+    } else {
+      html += `<div style="font-size:0.75rem;color:var(--text-muted)">No answers submitted yet.</div>`;
+    }
     html += `</div>`;
   });
   document.getElementById('adminBonusSection').innerHTML = html;

@@ -175,11 +175,19 @@
   <p class="sub">Predict the winner, draw or loser.<br>That's all you need to do.</p>
   <div class="input-group">
     <label>Your name</label>
-    <input id="loginName" type="text" placeholder="e.g. Christiaan" maxlength="30" />
+    <input id="loginName" type="text" placeholder="e.g. Christiaan" maxlength="30" oninput="checkExistingUser()" />
   </div>
   <div class="input-group">
     <label>Pool password</label>
     <input id="loginPass" type="password" placeholder="Ask the admin" />
+  </div>
+  <div class="input-group" id="pinGroup" style="display:none">
+    <label>Your 4-digit PIN</label>
+    <input id="loginPin" type="password" placeholder="Enter your PIN" maxlength="4" inputmode="numeric" pattern="[0-9]*" />
+  </div>
+  <div class="input-group" id="pinSetGroup" style="display:none">
+    <label>Choose a 4-digit PIN (you'll need this every time)</label>
+    <input id="loginPinSet" type="password" placeholder="Choose a PIN" maxlength="4" inputmode="numeric" pattern="[0-9]*" />
   </div>
   <button class="btn btn-primary" onclick="doLogin()">Join</button>
   <div class="divider">or</div>
@@ -528,20 +536,34 @@ window.startNewPoule = async function() {
   if (!pass || pass.length < 3) { alert("Choose a password of at least 3 characters."); return; }
   const name = prompt("Your name (admin):");
   if (!name || name.trim().length < 1) return;
+  let pin = prompt("Choose a 4-digit PIN for yourself (you will need this to log in):");
+  while (!pin || !/^[0-9]{4}$/.test(pin)) {
+    pin = prompt("Invalid PIN. Please choose exactly 4 digits (0-9):");
+    if (pin === null) return;
+  }
 
   if (shared.adminPass && shared.adminPass !== pass) {
     alert("A pool with a different password already exists."); return;
   }
 
-  const key = name.trim().toLowerCase().replace(/[.#$/[\]]/g, '_');
+  const key = name.trim().toLowerCase().replace(/[.#$\/[\]]/g, '_');
   if (!shared.adminPass) await fbSet('/adminPass', pass);
-  await fbSet(`/users/${key}`, { name: name.trim(), isAdmin: true });
+  await fbSet(`/users/${key}`, { name: name.trim(), isAdmin: true, pin });
   if (!shared.picks[key]) await fbSet(`/picks/${key}`, {});
 
   currentUser = key; isAdmin = true;
   sessionStorage.setItem('wk2026_user', key);
   sessionStorage.setItem('wk2026_admin', '1');
   enterApp();
+}
+
+// Show/hide PIN field based on whether user already exists
+window.checkExistingUser = function() {
+  const name = document.getElementById('loginName').value.trim();
+  const key = name.toLowerCase().replace(/[.#$\/[\]]/g, '_');
+  const exists = shared.users && shared.users[key];
+  document.getElementById('pinGroup').style.display = exists ? '' : 'none';
+  document.getElementById('pinSetGroup').style.display = (!exists && name.length > 0) ? '' : 'none';
 }
 
 window.doLogin = async function() {
@@ -552,9 +574,23 @@ window.doLogin = async function() {
   if (!shared.adminPass) { err.textContent = "No pool has been created yet. Ask the admin."; return; }
   if (pass !== shared.adminPass) { err.textContent = "Wrong password."; return; }
 
-  const key = name.toLowerCase().replace(/[.#$/[\]]/g, '_');
-  if (!shared.users[key]) await fbSet(`/users/${key}`, { name, isAdmin: false });
-  if (!shared.picks[key]) await fbSet(`/picks/${key}`, {});
+  const key = name.toLowerCase().replace(/[.#$\/[\]]/g, '_');
+  const existingUser = shared.users && shared.users[key];
+
+  if (existingUser) {
+    // Existing user — check PIN
+    const pin = document.getElementById('loginPin').value;
+    if (!pin || pin.length !== 4) { err.textContent = "Please enter your 4-digit PIN."; return; }
+    if (pin !== existingUser.pin) { err.textContent = "Wrong PIN."; return; }
+  } else {
+    // New user — set PIN
+    const pinSet = document.getElementById('loginPinSet').value;
+    if (!pinSet || pinSet.length !== 4 || !/^[0-9]{4}$/.test(pinSet)) {
+      err.textContent = "Please choose a 4-digit PIN (numbers only)."; return;
+    }
+    await fbSet(`/users/${key}`, { name, isAdmin: false, pin: pinSet });
+    if (!shared.picks[key]) await fbSet(`/picks/${key}`, {});
+  }
 
   currentUser = key;
   isAdmin = (shared.users[key] && shared.users[key].isAdmin) || false;

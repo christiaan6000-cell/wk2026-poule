@@ -228,7 +228,7 @@
       <div class="progress-bar-bg"><div class="progress-bar" id="progressBar" style="width:0%"></div></div>
     </div>
     <div style="display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap">
-      <select id="filterGroup" onchange="renderMatches(this.value)">
+      <select id="filterGroup" onchange="activeFilter = this.value; renderMatches()">
         <option value="all">All matches</option>
         <option value="open">Still to fill in</option>
         <option value="A">Group A</option><option value="B">Group B</option>
@@ -484,6 +484,7 @@ let shared = { users:{}, picks:{}, results:{}, knockoutTeams:{}, bonusAnswers:{}
 let currentUser = null;
 let isAdmin = false;
 let modalMatchId = null;
+let activeFilter = 'all'; // persists filter selection across re-renders
 
 // ---- FIREBASE HELPERS ----
 async function fbSet(path, value) {
@@ -733,9 +734,11 @@ window.setPick = async function(matchId, pick) {
 }
 
 // ---- RENDER MATCHES ----
-function renderMatches(selectedFilter) {
+function renderMatches() {
+  // Sync dropdown to activeFilter (in case it was reset by re-render)
   const filterEl = document.getElementById('filterGroup');
-  const filter = selectedFilter || (filterEl ? filterEl.value : 'all');
+  if (filterEl && filterEl.value !== activeFilter) filterEl.value = activeFilter;
+  const filter = activeFilter;
   const myPicks = getMyPicks();
   const avail = availableMatches();
 

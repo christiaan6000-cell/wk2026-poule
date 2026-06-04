@@ -228,7 +228,7 @@
       <div class="progress-bar-bg"><div class="progress-bar" id="progressBar" style="width:0%"></div></div>
     </div>
     <div style="display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap">
-      <select id="filterGroup" onchange="renderMatches()">
+      <select id="filterGroup" onchange="renderMatches(this.value)">
         <option value="all">All matches</option>
         <option value="open">Still to fill in</option>
         <option value="A">Group A</option><option value="B">Group B</option>
@@ -733,8 +733,9 @@ window.setPick = async function(matchId, pick) {
 }
 
 // ---- RENDER MATCHES ----
-function renderMatches() {
-  const filter = document.getElementById('filterGroup').value;
+function renderMatches(selectedFilter) {
+  const filterEl = document.getElementById('filterGroup');
+  const filter = selectedFilter || (filterEl ? filterEl.value : 'all');
   const myPicks = getMyPicks();
   const avail = availableMatches();
 

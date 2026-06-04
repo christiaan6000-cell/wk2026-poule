@@ -594,7 +594,9 @@ window.doLogin = async function() {
   if (pass !== shared.adminPass) { err.textContent = "Wrong password."; return; }
 
   const key = name.toLowerCase().replace(/[.#$\/ \[\]]/g, '_');
-  const existingUser = shared.users && shared.users[key];
+  // Always fetch fresh from Firebase to avoid race condition with stale shared data
+  const freshSnap = await get(ref(db, `/users/${key}`));
+  const existingUser = freshSnap.exists() ? freshSnap.val() : null;
 
   if (existingUser) {
     if (!existingUser.pin) {

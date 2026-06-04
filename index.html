@@ -632,6 +632,9 @@ window.logout = function() {
 function enterApp() {
   const user = shared.users[currentUser];
   if (!user) return;
+  // Always re-read isAdmin from Firebase data (handles manual changes in Firebase console)
+  isAdmin = user.isAdmin || false;
+  sessionStorage.setItem('wk2026_admin', isAdmin ? '1' : '0');
   document.getElementById('topUsername').textContent = user.name;
   document.getElementById('adminTab').style.display = isAdmin ? '' : 'none';
   showScreen('app');
@@ -991,7 +994,17 @@ function renderAdminUsers() {
   users.forEach(k => {
     const u = shared.users[k];
     const pts = calcPoints(k);
-    html += `<div class="admin-user-row"><div style="flex:1">${u.name} <span class="badge ${u.isAdmin?'badge-admin':'badge-user'}">${u.isAdmin?'admin':'participant'}</span></div><div style="font-size:0.8rem;color:var(--text-muted)">${Object.keys(shared.picks[k]||{}).length} filled · ${pts} pts</div></div>`;
+    const isSelf = k === currentUser;
+    html += `<div class="admin-user-row">`;
+    html += `<div style="flex:1">${u.name} <span class="badge ${u.isAdmin?'badge-admin':'badge-user'}">${u.isAdmin?'admin':'participant'}</span></div>`;
+    html += `<div style="font-size:0.8rem;color:var(--text-muted);margin-right:10px">${Object.keys(shared.picks[k]||{}).length} filled · ${pts} pts</div>`;
+    if (!isSelf) {
+      html += `<button class="result-btn" style="white-space:nowrap" onclick="toggleAdmin('${k}')">${u.isAdmin ? '↓ Make participant' : '↑ Make admin'}</button>`;
+      html += `<button class="result-btn" style="color:var(--red);border-color:var(--red);white-space:nowrap" onclick="removeUser('${k}')">✕ Remove</button>`;
+    } else {
+      html += `<span style="font-size:0.75rem;color:var(--text-muted)">(you)</span>`;
+    }
+    html += `</div>`;
   });
   document.getElementById('adminUserList').innerHTML = html || '<div style="padding:14px;color:var(--text-muted);font-size:0.85rem">No participants yet.</div>';
 }
@@ -1040,6 +1053,21 @@ function renderAdminBonus() {
     html += `</div>`;
   });
   document.getElementById('adminBonusSection').innerHTML = html;
+}
+
+window.toggleAdmin = async function(key) {
+  const u = shared.users[key];
+  if (!u) return;
+  await fbSet(`/users/${key}/isAdmin`, !u.isAdmin);
+}
+
+window.removeUser = async function(key) {
+  const u = shared.users[key];
+  if (!u) return;
+  if (!confirm(`Remove ${u.name} from the pool? Their predictions will also be deleted.`)) return;
+  await fbRemove(`/users/${key}`);
+  await fbRemove(`/picks/${key}`);
+  await fbRemove(`/bonusAnswers/${key}`);
 }
 
 window.toggleBonusLock = async function() {

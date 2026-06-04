@@ -1,20 +1,20 @@
 <!DOCTYPE html>
-<html lang="nl">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>WK 2026 Poule</title>
+<title>TEI WC 2026 Pool ⚽</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
     --green: #16a34a; --green-light: #dcfce7; --green-text: #14532d;
     --red: #dc2626; --red-light: #fee2e2; --red-text: #7f1d1d;
     --gray: #6b7280; --gray-light: #f3f4f6; --gray-border: #e5e7eb;
-    --blue: #2563eb; --blue-light: #dbeafe; --blue-text: #1e3a8a;
+    --blue: #E3001B; --blue-light: #fde8eb; --blue-text: #8b0010;
     --yellow: #ca8a04; --yellow-light: #fef9c3;
     --orange: #ea580c; --orange-light: #ffedd5; --orange-text: #7c2d12;
-    --bg: #f8fafc; --white: #ffffff;
-    --text: #111827; --text-muted: #6b7280;
+    --bg: #f9f9f9; --white: #ffffff;
+    --text: #1a1a1a; --text-muted: #6b7280;
     --radius: 10px; --shadow: 0 1px 3px rgba(0,0,0,.1);
   }
   body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
@@ -148,49 +148,50 @@
 <!-- Loading overlay -->
 <div id="loadingOverlay">
   <div class="spinner"></div>
-  <p>Verbinden met poule…</p>
+  <p>Connecting to pool…</p>
 </div>
 
 <div id="home" class="screen">
-  <div style="font-size:2.5rem;margin-bottom:12px">⚽</div>
-  <h1>WK 2026 Poule</h1>
-  <p class="sub">Voorspel winnaar, gelijkspel of verliezer.<br>Meer hoef je niet te doen.</p>
+  <div style="margin-bottom:18px"><img src="https://www.top-employers.com/nl/wp-content/themes/tei-theme/assets/images/logo.svg" onerror="this.style.display='none'" style="height:40px;" alt="Top Employers Institute" /></div>
+  <div style="font-size:2.5rem;margin-bottom:8px">⚽</div>
+  <h1>WC 2026 Pool</h1>
+  <p class="sub">Predict the winner, draw or loser.<br>That's all you need to do.</p>
   <div class="input-group">
-    <label>Jouw naam</label>
-    <input id="loginName" type="text" placeholder="bijv. Christiaan" maxlength="30" />
+    <label>Your name</label>
+    <input id="loginName" type="text" placeholder="e.g. Christiaan" maxlength="30" />
   </div>
   <div class="input-group">
-    <label>Wachtwoord poule</label>
-    <input id="loginPass" type="password" placeholder="Vraag aan de beheerder" />
+    <label>Pool password</label>
+    <input id="loginPass" type="password" placeholder="Ask the admin" />
   </div>
-  <button class="btn btn-primary" onclick="doLogin()">Meedoen</button>
+  <button class="btn btn-primary" onclick="doLogin()">Join</button>
   <div class="divider">of</div>
-  <button class="btn btn-outline btn-sm" style="width:100%" onclick="startNewPoule()">Nieuwe poule starten (beheerder)</button>
+  <button class="btn btn-outline btn-sm" style="width:100%" onclick="startNewPoule()">Start new pool (admin)</button>
   <div id="loginError" style="color:var(--red);font-size:0.85rem;margin-top:10px;text-align:center"></div>
 </div>
 
 <div id="app" class="screen">
   <div class="topbar">
-    <h1>⚽ WK 2026 Poule</h1>
+    <h1 style="display:flex;align-items:center;gap:10px"><span>⚽</span><span>WC 2026 Pool</span><span style="font-size:0.65rem;font-weight:600;background:#E3001B;color:white;padding:2px 8px;border-radius:99px;letter-spacing:.05em">TEI</span></h1>
     <div class="topbar-right">
       <span style="font-size:0.78rem;color:var(--green)"><span class="live-dot"></span>Live</span>
       <span class="username-pill" id="topUsername"></span>
-      <button class="btn btn-outline btn-sm" onclick="logout()">Uitloggen</button>
+      <button class="btn btn-outline btn-sm" onclick="logout()">Log out</button>
     </div>
   </div>
   <div class="tabs">
-    <div class="tab active" onclick="showTab('predictions')">Voorspellingen</div>
-    <div class="tab" onclick="showTab('bonus')">Bonusvragen</div>
-    <div class="tab" onclick="showTab('ranking')">Ranglijst</div>
-    <div class="tab" id="adminTab" style="display:none" onclick="showTab('admin')">Beheer</div>
+    <div class="tab active" onclick="showTab('predictions')">Predictions</div>
+    <div class="tab" onclick="showTab('bonus')">Bonus questions</div>
+    <div class="tab" onclick="showTab('ranking')">Standings</div>
+    <div class="tab" id="adminTab" style="display:none" onclick="showTab('admin')">Admin</div>
   </div>
 
   <div id="tab-predictions">
     <div class="stats-bar">
-      <div class="stat-card"><div class="num" id="statDone">0</div><div class="lbl">Ingevuld</div></div>
-      <div class="stat-card"><div class="num" id="statLeft">104</div><div class="lbl">Beschikbaar</div></div>
-      <div class="stat-card"><div class="num" id="statPoints">—</div><div class="lbl">Punten</div></div>
-      <div class="stat-card"><div class="num" id="statCorrect">—</div><div class="lbl">Goed %</div></div>
+      <div class="stat-card"><div class="num" id="statDone">0</div><div class="lbl">Filled in</div></div>
+      <div class="stat-card"><div class="num" id="statLeft">104</div><div class="lbl">Available</div></div>
+      <div class="stat-card"><div class="num" id="statPoints">—</div><div class="lbl">Points</div></div>
+      <div class="stat-card"><div class="num" id="statCorrect">—</div><div class="lbl">Correct %</div></div>
     </div>
     <div style="margin-bottom:14px">
       <div style="font-size:0.8rem;color:var(--text-muted);margin-bottom:5px" id="progressLabel">0 van 72 ingevuld</div>
@@ -198,14 +199,14 @@
     </div>
     <div style="display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap">
       <select id="filterGroup" onchange="renderMatches()">
-        <option value="all">Alle wedstrijden</option>
-        <option value="open">Nog in te vullen</option>
-        <option value="A">Groep A</option><option value="B">Groep B</option>
-        <option value="C">Groep C</option><option value="D">Groep D</option>
-        <option value="E">Groep E</option><option value="F">Groep F</option>
-        <option value="G">Groep G</option><option value="H">Groep H</option>
-        <option value="I">Groep I</option><option value="J">Groep J</option>
-        <option value="K">Groep K</option><option value="L">Groep L</option>
+        <option value="all">All matches</option>
+        <option value="open">Still to fill in</option>
+        <option value="A">Group A</option><option value="B">Group B</option>
+        <option value="C">Group C</option><option value="D">Group D</option>
+        <option value="E">Group E</option><option value="F">Group F</option>
+        <option value="G">Group G</option><option value="H">Group H</option>
+        <option value="I">Group I</option><option value="J">Group J</option>
+        <option value="K">Group K</option><option value="L">Group L</option>
         <option value="knockout">Knockout</option>
       </select>
     </div>
@@ -214,67 +215,67 @@
 
   <div id="tab-bonus" style="display:none">
     <div id="bonusLockedNotice" class="notice notice-orange" style="display:none;margin-bottom:20px">
-      ⏳ Bonusvragen zijn gesloten — de eerste wedstrijd is begonnen.
+      ⏳ Bonus questions are closed — the first match has started.
     </div>
     <div id="bonusOpenNotice" class="notice notice-blue" style="margin-bottom:20px">
-      Beantwoord de bonusvragen vóór 11 juni (eerste wedstrijd). Daarna zijn ze gesloten.
+      Answer the bonus questions before June 11 (first match). After that they will be closed.
     </div>
     <div id="bonusQuestions"></div>
   </div>
 
   <div id="tab-ranking" style="display:none">
-    <div class="notice notice-blue">Ranglijst wordt live bijgewerkt zodra de beheerder uitslagen invoert.</div>
+    <div class="notice notice-blue">Standings are updated live as the admin enters results.</div>
     <div class="ranking-list" id="rankingList"></div>
   </div>
 
   <div id="tab-admin" style="display:none">
     <div class="admin-section">
-      <h3>Poule delen</h3>
-      <p style="font-size:0.85rem;color:var(--text-muted);margin-bottom:10px">Stuur deze link en dit wachtwoord naar je deelnemers.</p>
+      <h3>Share pool</h3>
+      <p style="font-size:0.85rem;color:var(--text-muted);margin-bottom:10px">Send this link and password to your participants.</p>
       <div class="share-box">
         <div class="share-url" id="shareUrl"></div>
-        <button class="btn btn-outline btn-sm" onclick="copyLink()">Kopieer</button>
+        <button class="btn btn-outline btn-sm" onclick="copyLink()">Copy</button>
       </div>
-      <p style="font-size:0.8rem;color:var(--text-muted);margin-top:8px">Wachtwoord: <strong id="sharePass"></strong></p>
+      <p style="font-size:0.8rem;color:var(--text-muted);margin-top:8px">Password: <strong id="sharePass"></strong></p>
     </div>
 
     <div class="admin-section">
-      <h3>Knockout teams &amp; uitslagen</h3>
+      <h3>Knockout teams &amp; results</h3>
       <p style="font-size:0.85rem;color:var(--text-muted);margin-bottom:12px">
-        Nadat de groepsfase klaar is: vul eerst de teams in voor elke knockoutwedstrijd. Daarna kunnen deelnemers voorspellen, en pas daarna voer je de uitslag in.
+        After the group stage: first fill in the teams for each knockout match. Then participants can predict, and only then enter the result.
       </p>
       <div id="knockoutPendingCount" class="notice notice-orange" style="display:none"></div>
       <div id="adminKnockoutList"></div>
     </div>
 
     <div class="admin-section">
-      <h3>Groepsfase uitslagen</h3>
-      <p style="font-size:0.85rem;color:var(--text-muted);margin-bottom:12px">Klik op de winnaar na elke groepswedstrijd.</p>
+      <h3>Group stage results</h3>
+      <p style="font-size:0.85rem;color:var(--text-muted);margin-bottom:12px">Click the winner after each group match.</p>
       <select id="adminGroupFilter" onchange="renderAdminGroupMatches()" style="margin-bottom:12px">
-        <option value="all">Alle groepen</option>
-        <option value="unsettled">Nog geen uitslag</option>
-        <option value="A">Groep A</option><option value="B">Groep B</option>
-        <option value="C">Groep C</option><option value="D">Groep D</option>
-        <option value="E">Groep E</option><option value="F">Groep F</option>
-        <option value="G">Groep G</option><option value="H">Groep H</option>
-        <option value="I">Groep I</option><option value="J">Groep J</option>
-        <option value="K">Groep K</option><option value="L">Groep L</option>
+        <option value="all">All groups</option>
+        <option value="unsettled">No result yet</option>
+        <option value="A">Group A</option><option value="B">Group B</option>
+        <option value="C">Group C</option><option value="D">Group D</option>
+        <option value="E">Group E</option><option value="F">Group F</option>
+        <option value="G">Group G</option><option value="H">Group H</option>
+        <option value="I">Group I</option><option value="J">Group J</option>
+        <option value="K">Group K</option><option value="L">Group L</option>
       </select>
       <div id="adminGroupMatchList"></div>
     </div>
 
     <div class="admin-section">
-      <h3>Bonusvragen afhandelen</h3>
-      <p style="font-size:0.85rem;color:var(--text-muted);margin-bottom:12px">Vul het juiste antwoord in na afloop van het toernooi. Punten worden automatisch bijgewerkt.</p>
+      <h3>Process bonus questions</h3>
+      <p style="font-size:0.85rem;color:var(--text-muted);margin-bottom:12px">Fill in the correct answer after the tournament. Points are updated automatically.</p>
       <div id="adminBonusSection"></div>
     </div>
 
     <div class="admin-section">
-      <h3>Deelnemers (<span id="userCount">0</span>)</h3>
+      <h3>Participants (<span id="userCount">0</span>)</h3>
       <div class="admin-users" id="adminUserList"></div>
     </div>
     <div class="admin-section">
-      <button class="btn btn-danger btn-sm" onclick="resetPoule()">⚠️ Hele poule resetten</button>
+      <button class="btn btn-danger btn-sm" onclick="resetPoule()">⚠️ Reset entire pool</button>
     </div>
   </div>
 </div>
@@ -282,17 +283,17 @@
 <!-- MODAL: teams invullen voor knockoutwedstrijd -->
 <div id="teamModal" class="modal-bg" style="display:none">
   <div class="modal">
-    <h3 id="modalTitle">Teams invullen</h3>
+    <h3 id="modalTitle">Enter teams</h3>
     <p style="font-size:0.85rem;color:var(--text-muted);margin-bottom:16px" id="modalDesc"></p>
     <div class="modal-row">
-      <input id="modalHome" type="text" placeholder="Thuisteam" maxlength="40" />
+      <input id="modalHome" type="text" placeholder="Home team" maxlength="40" />
     </div>
     <div class="modal-row">
-      <input id="modalAway" type="text" placeholder="Uitteam" maxlength="40" />
+      <input id="modalAway" type="text" placeholder="Away team" maxlength="40" />
     </div>
     <div class="modal-actions">
-      <button class="btn btn-outline btn-sm" onclick="closeModal()">Annuleren</button>
-      <button class="btn btn-primary btn-sm" style="width:auto" onclick="saveTeams()">Opslaan & openen</button>
+      <button class="btn btn-outline btn-sm" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary btn-sm" style="width:auto" onclick="saveTeams()">Save & open</button>
     </div>
   </div>
 </div>
@@ -317,119 +318,131 @@ const db = getDatabase(app);
 
 // ---- MATCH DATA ----
 const GROUP_MATCHES = [
-  {id:1,group:"A",home:"Mexico",away:"Ecuador",date:"11 jun"},
-  {id:2,group:"A",home:"USA",away:"Honduras",date:"11 jun"},
-  {id:3,group:"A",home:"Mexico",away:"Honduras",date:"15 jun"},
-  {id:4,group:"A",home:"USA",away:"Ecuador",date:"15 jun"},
-  {id:5,group:"A",home:"Ecuador",away:"Honduras",date:"19 jun"},
-  {id:6,group:"A",home:"USA",away:"Mexico",date:"19 jun"},
-  {id:7,group:"B",home:"Argentinië",away:"Peru",date:"12 jun"},
-  {id:8,group:"B",home:"Chili",away:"Colombia",date:"12 jun"},
-  {id:9,group:"B",home:"Argentinië",away:"Chili",date:"16 jun"},
-  {id:10,group:"B",home:"Colombia",away:"Peru",date:"16 jun"},
-  {id:11,group:"B",home:"Argentinië",away:"Colombia",date:"20 jun"},
-  {id:12,group:"B",home:"Peru",away:"Chili",date:"20 jun"},
-  {id:13,group:"C",home:"Brazilië",away:"Saudi-Arabië",date:"12 jun"},
-  {id:14,group:"C",home:"Australië",away:"Kameroen",date:"12 jun"},
-  {id:15,group:"C",home:"Brazilië",away:"Australië",date:"16 jun"},
-  {id:16,group:"C",home:"Kameroen",away:"Saudi-Arabië",date:"16 jun"},
-  {id:17,group:"C",home:"Brazilië",away:"Kameroen",date:"20 jun"},
-  {id:18,group:"C",home:"Saudi-Arabië",away:"Australië",date:"20 jun"},
-  {id:19,group:"D",home:"Frankrijk",away:"Algerije",date:"13 jun"},
-  {id:20,group:"D",home:"Denemarken",away:"Zuid-Afrika",date:"13 jun"},
-  {id:21,group:"D",home:"Frankrijk",away:"Denemarken",date:"17 jun"},
-  {id:22,group:"D",home:"Zuid-Afrika",away:"Algerije",date:"17 jun"},
-  {id:23,group:"D",home:"Frankrijk",away:"Zuid-Afrika",date:"21 jun"},
-  {id:24,group:"D",home:"Algerije",away:"Denemarken",date:"21 jun"},
-  {id:25,group:"E",home:"Spanje",away:"Zuid-Korea",date:"13 jun"},
-  {id:26,group:"E",home:"België",away:"Nieuw-Zeeland",date:"13 jun"},
-  {id:27,group:"E",home:"Spanje",away:"België",date:"17 jun"},
-  {id:28,group:"E",home:"Nieuw-Zeeland",away:"Zuid-Korea",date:"17 jun"},
-  {id:29,group:"E",home:"Spanje",away:"Nieuw-Zeeland",date:"21 jun"},
-  {id:30,group:"E",home:"Zuid-Korea",away:"België",date:"21 jun"},
-  {id:31,group:"F",home:"Nederland",away:"Japan",date:"13 jun"},
-  {id:32,group:"F",home:"Tunesië",away:"Play-off winnaar",date:"13 jun"},
-  {id:33,group:"F",home:"Nederland",away:"Tunesië",date:"17 jun"},
-  {id:34,group:"F",home:"Play-off winnaar",away:"Japan",date:"17 jun"},
-  {id:35,group:"F",home:"Nederland",away:"Play-off winnaar",date:"21 jun"},
-  {id:36,group:"F",home:"Japan",away:"Tunesië",date:"21 jun"},
-  {id:37,group:"G",home:"Engeland",away:"Senegal",date:"14 jun"},
-  {id:38,group:"G",home:"Iran",away:"Slowakije",date:"14 jun"},
-  {id:39,group:"G",home:"Engeland",away:"Iran",date:"18 jun"},
-  {id:40,group:"G",home:"Slowakije",away:"Senegal",date:"18 jun"},
-  {id:41,group:"G",home:"Engeland",away:"Slowakije",date:"22 jun"},
-  {id:42,group:"G",home:"Senegal",away:"Iran",date:"22 jun"},
-  {id:43,group:"H",home:"Portugal",away:"Ivoorkust",date:"14 jun"},
-  {id:44,group:"H",home:"Venezuela",away:"Noorwegen",date:"14 jun"},
-  {id:45,group:"H",home:"Portugal",away:"Venezuela",date:"18 jun"},
-  {id:46,group:"H",home:"Noorwegen",away:"Ivoorkust",date:"18 jun"},
-  {id:47,group:"H",home:"Portugal",away:"Noorwegen",date:"22 jun"},
-  {id:48,group:"H",home:"Ivoorkust",away:"Venezuela",date:"22 jun"},
-  {id:49,group:"I",home:"Duitsland",away:"DR Congo",date:"14 jun"},
-  {id:50,group:"I",home:"Schotland",away:"Thailand",date:"14 jun"},
-  {id:51,group:"I",home:"Duitsland",away:"Schotland",date:"18 jun"},
-  {id:52,group:"I",home:"Thailand",away:"DR Congo",date:"18 jun"},
-  {id:53,group:"I",home:"Duitsland",away:"Thailand",date:"22 jun"},
-  {id:54,group:"I",home:"DR Congo",away:"Schotland",date:"22 jun"},
-  {id:55,group:"J",home:"Italië",away:"Nigeria",date:"15 jun"},
-  {id:56,group:"J",home:"Roemenië",away:"Marokko",date:"15 jun"},
-  {id:57,group:"J",home:"Italië",away:"Roemenië",date:"19 jun"},
-  {id:58,group:"J",home:"Marokko",away:"Nigeria",date:"19 jun"},
-  {id:59,group:"J",home:"Italië",away:"Marokko",date:"23 jun"},
-  {id:60,group:"J",home:"Nigeria",away:"Roemenië",date:"23 jun"},
-  {id:61,group:"K",home:"Uruguay",away:"Irak",date:"15 jun"},
-  {id:62,group:"K",home:"Canada",away:"Haïti",date:"15 jun"},
-  {id:63,group:"K",home:"Uruguay",away:"Canada",date:"19 jun"},
-  {id:64,group:"K",home:"Haïti",away:"Irak",date:"19 jun"},
-  {id:65,group:"K",home:"Uruguay",away:"Haïti",date:"23 jun"},
-  {id:66,group:"K",home:"Irak",away:"Canada",date:"23 jun"},
-  {id:67,group:"L",home:"Japan",away:"Egypte",date:"15 jun"},
-  {id:68,group:"L",home:"Spanje",away:"Kroatië",date:"15 jun"},
-  {id:69,group:"L",home:"Japan",away:"Spanje",date:"19 jun"},
-  {id:70,group:"L",home:"Kroatië",away:"Egypte",date:"19 jun"},
-  {id:71,group:"L",home:"Japan",away:"Kroatië",date:"23 jun"},
-  {id:72,group:"L",home:"Egypte",away:"Spanje",date:"23 jun"},
+  // Group A: Mexico, South Africa, South Korea, Czechia
+  {id:1,group:"A",home:"Mexico",away:"South Africa",date:"11 Jun"},
+  {id:2,group:"A",home:"South Korea",away:"Czechia",date:"11 Jun"},
+  {id:3,group:"A",home:"Czechia",away:"South Africa",date:"18 Jun"},
+  {id:4,group:"A",home:"Mexico",away:"South Korea",date:"18 Jun"},
+  {id:5,group:"A",home:"Czechia",away:"Mexico",date:"24 Jun"},
+  {id:6,group:"A",home:"South Africa",away:"South Korea",date:"24 Jun"},
+  // Group B: Canada, Bosnia and Herzegovina, Qatar, Switzerland
+  {id:7,group:"B",home:"Canada",away:"Bosnia",date:"12 Jun"},
+  {id:8,group:"B",home:"Qatar",away:"Switzerland",date:"13 Jun"},
+  {id:9,group:"B",home:"Switzerland",away:"Bosnia",date:"18 Jun"},
+  {id:10,group:"B",home:"Canada",away:"Qatar",date:"18 Jun"},
+  {id:11,group:"B",home:"Switzerland",away:"Canada",date:"24 Jun"},
+  {id:12,group:"B",home:"Bosnia",away:"Qatar",date:"24 Jun"},
+  // Group C: Brazil, Morocco, Haiti, Scotland
+  {id:13,group:"C",home:"Brazil",away:"Morocco",date:"13 Jun"},
+  {id:14,group:"C",home:"Haiti",away:"Scotland",date:"13 Jun"},
+  {id:15,group:"C",home:"Scotland",away:"Morocco",date:"19 Jun"},
+  {id:16,group:"C",home:"Brazil",away:"Haiti",date:"19 Jun"},
+  {id:17,group:"C",home:"Scotland",away:"Brazil",date:"24 Jun"},
+  {id:18,group:"C",home:"Morocco",away:"Haiti",date:"24 Jun"},
+  // Group D: United States, Paraguay, Australia, Turkey
+  {id:19,group:"D",home:"USA",away:"Paraguay",date:"12 Jun"},
+  {id:20,group:"D",home:"Australia",away:"Turkey",date:"13 Jun"},
+  {id:21,group:"D",home:"USA",away:"Australia",date:"19 Jun"},
+  {id:22,group:"D",home:"Turkey",away:"Paraguay",date:"19 Jun"},
+  {id:23,group:"D",home:"Turkey",away:"USA",date:"25 Jun"},
+  {id:24,group:"D",home:"Paraguay",away:"Australia",date:"25 Jun"},
+  // Group E: Germany, Curacao, Ivory Coast, Ecuador
+  {id:25,group:"E",home:"Germany",away:"Curacao",date:"14 Jun"},
+  {id:26,group:"E",home:"Ivory Coast",away:"Ecuador",date:"14 Jun"},
+  {id:27,group:"E",home:"Germany",away:"Ivory Coast",date:"20 Jun"},
+  {id:28,group:"E",home:"Ecuador",away:"Curacao",date:"20 Jun"},
+  {id:29,group:"E",home:"Ecuador",away:"Germany",date:"25 Jun"},
+  {id:30,group:"E",home:"Curacao",away:"Ivory Coast",date:"25 Jun"},
+  // Group F: Netherlands, Japan, Sweden, Tunisia
+  {id:31,group:"F",home:"Netherlands",away:"Japan",date:"14 Jun"},
+  {id:32,group:"F",home:"Sweden",away:"Tunisia",date:"14 Jun"},
+  {id:33,group:"F",home:"Netherlands",away:"Sweden",date:"20 Jun"},
+  {id:34,group:"F",home:"Tunisia",away:"Japan",date:"20 Jun"},
+  {id:35,group:"F",home:"Japan",away:"Sweden",date:"25 Jun"},
+  {id:36,group:"F",home:"Tunisia",away:"Netherlands",date:"25 Jun"},
+  // Group G: Belgium, Egypt, Iran, New Zealand
+  {id:37,group:"G",home:"Belgium",away:"Egypt",date:"15 Jun"},
+  {id:38,group:"G",home:"Iran",away:"New Zealand",date:"15 Jun"},
+  {id:39,group:"G",home:"Belgium",away:"Iran",date:"21 Jun"},
+  {id:40,group:"G",home:"New Zealand",away:"Egypt",date:"21 Jun"},
+  {id:41,group:"G",home:"Egypt",away:"Iran",date:"26 Jun"},
+  {id:42,group:"G",home:"New Zealand",away:"Belgium",date:"26 Jun"},
+  // Group H: Spain, Cape Verde, Saudi Arabia, Uruguay
+  {id:43,group:"H",home:"Spain",away:"Cape Verde",date:"15 Jun"},
+  {id:44,group:"H",home:"Saudi Arabia",away:"Uruguay",date:"15 Jun"},
+  {id:45,group:"H",home:"Spain",away:"Saudi Arabia",date:"21 Jun"},
+  {id:46,group:"H",home:"Uruguay",away:"Cape Verde",date:"21 Jun"},
+  {id:47,group:"H",home:"Cape Verde",away:"Saudi Arabia",date:"26 Jun"},
+  {id:48,group:"H",home:"Uruguay",away:"Spain",date:"26 Jun"},
+  // Group I: France, Senegal, Iraq, Norway
+  {id:49,group:"I",home:"France",away:"Senegal",date:"16 Jun"},
+  {id:50,group:"I",home:"Iraq",away:"Norway",date:"16 Jun"},
+  {id:51,group:"I",home:"France",away:"Iraq",date:"22 Jun"},
+  {id:52,group:"I",home:"Norway",away:"Senegal",date:"22 Jun"},
+  {id:53,group:"I",home:"Norway",away:"France",date:"26 Jun"},
+  {id:54,group:"I",home:"Senegal",away:"Iraq",date:"26 Jun"},
+  // Group J: Argentina, Algeria, Austria, Jordan
+  {id:55,group:"J",home:"Argentina",away:"Algeria",date:"16 Jun"},
+  {id:56,group:"J",home:"Austria",away:"Jordan",date:"16 Jun"},
+  {id:57,group:"J",home:"Argentina",away:"Austria",date:"22 Jun"},
+  {id:58,group:"J",home:"Jordan",away:"Algeria",date:"22 Jun"},
+  {id:59,group:"J",home:"Algeria",away:"Austria",date:"27 Jun"},
+  {id:60,group:"J",home:"Jordan",away:"Argentina",date:"27 Jun"},
+  // Group K: Portugal, DR Congo, Uzbekistan, Colombia
+  {id:61,group:"K",home:"Portugal",away:"DR Congo",date:"17 Jun"},
+  {id:62,group:"K",home:"Uzbekistan",away:"Colombia",date:"17 Jun"},
+  {id:63,group:"K",home:"Portugal",away:"Uzbekistan",date:"23 Jun"},
+  {id:64,group:"K",home:"Colombia",away:"DR Congo",date:"23 Jun"},
+  {id:65,group:"K",home:"Colombia",away:"Portugal",date:"27 Jun"},
+  {id:66,group:"K",home:"DR Congo",away:"Uzbekistan",date:"27 Jun"},
+  // Group L: England, Croatia, Ghana, Panama
+  {id:67,group:"L",home:"England",away:"Croatia",date:"17 Jun"},
+  {id:68,group:"L",home:"Ghana",away:"Panama",date:"17 Jun"},
+  {id:69,group:"L",home:"England",away:"Ghana",date:"23 Jun"},
+  {id:70,group:"L",home:"Panama",away:"Croatia",date:"23 Jun"},
+  {id:71,group:"L",home:"Panama",away:"England",date:"27 Jun"},
+  {id:72,group:"L",home:"Croatia",away:"Ghana",date:"27 Jun"},
 ];
 
 const KNOCKOUT_MATCHES = [
-  {id:73,round:"1/16e finale",slot:"16f-1",date:"27 jun"},
-  {id:74,round:"1/16e finale",slot:"16f-2",date:"27 jun"},
-  {id:75,round:"1/16e finale",slot:"16f-3",date:"28 jun"},
-  {id:76,round:"1/16e finale",slot:"16f-4",date:"28 jun"},
-  {id:77,round:"1/16e finale",slot:"16f-5",date:"29 jun"},
-  {id:78,round:"1/16e finale",slot:"16f-6",date:"29 jun"},
-  {id:79,round:"1/16e finale",slot:"16f-7",date:"30 jun"},
-  {id:80,round:"1/16e finale",slot:"16f-8",date:"30 jun"},
-  {id:81,round:"1/16e finale",slot:"16f-9",date:"1 jul"},
-  {id:82,round:"1/16e finale",slot:"16f-10",date:"1 jul"},
-  {id:83,round:"1/16e finale",slot:"16f-11",date:"2 jul"},
-  {id:84,round:"1/16e finale",slot:"16f-12",date:"2 jul"},
-  {id:85,round:"1/16e finale",slot:"16f-13",date:"3 jul"},
-  {id:86,round:"1/16e finale",slot:"16f-14",date:"3 jul"},
-  {id:87,round:"1/16e finale",slot:"16f-15",date:"4 jul"},
-  {id:88,round:"1/16e finale",slot:"16f-16",date:"4 jul"},
-  {id:89,round:"1/8e finale",slot:"8f-1",date:"5 jul"},
-  {id:90,round:"1/8e finale",slot:"8f-2",date:"5 jul"},
-  {id:91,round:"1/8e finale",slot:"8f-3",date:"6 jul"},
-  {id:92,round:"1/8e finale",slot:"8f-4",date:"6 jul"},
-  {id:93,round:"1/8e finale",slot:"8f-5",date:"7 jul"},
-  {id:94,round:"1/8e finale",slot:"8f-6",date:"7 jul"},
-  {id:95,round:"1/8e finale",slot:"8f-7",date:"8 jul"},
-  {id:96,round:"1/8e finale",slot:"8f-8",date:"8 jul"},
-  {id:97,round:"Kwartfinale",slot:"kf-1",date:"11 jul"},
-  {id:98,round:"Kwartfinale",slot:"kf-2",date:"11 jul"},
-  {id:99,round:"Kwartfinale",slot:"kf-3",date:"12 jul"},
-  {id:100,round:"Kwartfinale",slot:"kf-4",date:"12 jul"},
-  {id:101,round:"Halve finale",slot:"hf-1",date:"15 jul"},
-  {id:102,round:"Halve finale",slot:"hf-2",date:"15 jul"},
-  {id:103,round:"Troostfinale",slot:"tf-1",date:"18 jul"},
-  {id:104,round:"Finale",slot:"fin-1",date:"19 jul"},
+  {id:73,round:"Round of 32",slot:"16f-1",date:"27 jun"},
+  {id:74,round:"Round of 32",slot:"16f-2",date:"27 jun"},
+  {id:75,round:"Round of 32",slot:"16f-3",date:"28 jun"},
+  {id:76,round:"Round of 32",slot:"16f-4",date:"28 jun"},
+  {id:77,round:"Round of 32",slot:"16f-5",date:"29 jun"},
+  {id:78,round:"Round of 32",slot:"16f-6",date:"29 jun"},
+  {id:79,round:"Round of 32",slot:"16f-7",date:"30 jun"},
+  {id:80,round:"Round of 32",slot:"16f-8",date:"30 jun"},
+  {id:81,round:"Round of 32",slot:"16f-9",date:"1 jul"},
+  {id:82,round:"Round of 32",slot:"16f-10",date:"1 jul"},
+  {id:83,round:"Round of 32",slot:"16f-11",date:"2 jul"},
+  {id:84,round:"Round of 32",slot:"16f-12",date:"2 jul"},
+  {id:85,round:"Round of 32",slot:"16f-13",date:"3 jul"},
+  {id:86,round:"Round of 32",slot:"16f-14",date:"3 jul"},
+  {id:87,round:"Round of 32",slot:"16f-15",date:"4 jul"},
+  {id:88,round:"Round of 32",slot:"16f-16",date:"4 jul"},
+  {id:89,round:"Round of 16",slot:"8f-1",date:"5 jul"},
+  {id:90,round:"Round of 16",slot:"8f-2",date:"5 jul"},
+  {id:91,round:"Round of 16",slot:"8f-3",date:"6 jul"},
+  {id:92,round:"Round of 16",slot:"8f-4",date:"6 jul"},
+  {id:93,round:"Round of 16",slot:"8f-5",date:"7 jul"},
+  {id:94,round:"Round of 16",slot:"8f-6",date:"7 jul"},
+  {id:95,round:"Round of 16",slot:"8f-7",date:"8 jul"},
+  {id:96,round:"Round of 16",slot:"8f-8",date:"8 jul"},
+  {id:97,round:"Quarter-final",slot:"kf-1",date:"11 jul"},
+  {id:98,round:"Quarter-final",slot:"kf-2",date:"11 jul"},
+  {id:99,round:"Quarter-final",slot:"kf-3",date:"12 jul"},
+  {id:100,round:"Quarter-final",slot:"kf-4",date:"12 jul"},
+  {id:101,round:"Semi-final",slot:"hf-1",date:"15 jul"},
+  {id:102,round:"Semi-final",slot:"hf-2",date:"15 jul"},
+  {id:103,round:"Third place",slot:"tf-1",date:"18 jul"},
+  {id:104,round:"Final",slot:"fin-1",date:"19 jul"},
 ];
 
 const BONUS_QUESTIONS = [
-  { id:'topscorer', label:'Wie wordt topscorer?', type:'text', points:3, placeholder:'bijv. Mbappé' },
-  { id:'kampioen',  label:'Wie wordt wereldkampioen?', type:'text', points:10, placeholder:'bijv. Spanje' },
-  { id:'goals',     label:'Hoeveel goals worden er totaal gescoord?', type:'number', points:5, placeholder:'bijv. 180', note:'Dichtstbij wint' },
+  { id:'topscorer', label:'Who will be top scorer?', type:'text', points:3, placeholder:'e.g. Mbappé' },
+  { id:'kampioen',  label:'Who will be world champion?', type:'text', points:10, placeholder:'e.g. Spain' },
+  { id:'goals',     label:'How many goals will be scored in total?', type:'number', points:5, placeholder:'e.g. 180', note:'Closest wins' },
 ];
 
 // ---- STATE ----
@@ -487,13 +500,13 @@ onValue(ref(db, '/'), (snapshot) => {
 
 // ---- AUTH ----
 window.startNewPoule = async function() {
-  const pass = prompt("Kies een wachtwoord voor jouw poule (deel dit met deelnemers):");
-  if (!pass || pass.length < 3) { alert("Kies een wachtwoord van minimaal 3 tekens."); return; }
-  const name = prompt("Jouw naam (beheerder):");
+  const pass = prompt("Choose a password for your pool (share with participants):");
+  if (!pass || pass.length < 3) { alert("Choose a password of at least 3 characters."); return; }
+  const name = prompt("Your name (admin):");
   if (!name || name.trim().length < 1) return;
 
   if (shared.adminPass && shared.adminPass !== pass) {
-    alert("Er bestaat al een poule met een ander wachtwoord."); return;
+    alert("A pool with a different password already exists."); return;
   }
 
   const key = name.trim().toLowerCase().replace(/[.#$/[\]]/g, '_');
@@ -511,9 +524,9 @@ window.doLogin = async function() {
   const name = document.getElementById('loginName').value.trim();
   const pass = document.getElementById('loginPass').value;
   const err = document.getElementById('loginError');
-  if (!name) { err.textContent = "Vul je naam in."; return; }
-  if (!shared.adminPass) { err.textContent = "Er is nog geen poule aangemaakt. Vraag de beheerder."; return; }
-  if (pass !== shared.adminPass) { err.textContent = "Verkeerd wachtwoord."; return; }
+  if (!name) { err.textContent = "Please enter your name."; return; }
+  if (!shared.adminPass) { err.textContent = "No pool has been created yet. Ask the admin."; return; }
+  if (pass !== shared.adminPass) { err.textContent = "Wrong password."; return; }
 
   const key = name.toLowerCase().replace(/[.#$/[\]]/g, '_');
   if (!shared.users[key]) await fbSet(`/users/${key}`, { name, isAdmin: false });
@@ -581,7 +594,7 @@ function availableMatches() {
 }
 
 window.setPick = async function(matchId, pick) {
-  if (shared.results[matchId]) { alert("Deze wedstrijd is al gespeeld."); return; }
+  if (shared.results[matchId]) { alert("This match has already been played."); return; }
   await fbSet(`/picks/${currentUser}/${matchId}`, pick);
 }
 
@@ -602,20 +615,20 @@ function renderMatches() {
 
   const pendingKO = KNOCKOUT_MATCHES.filter(m => !isKOOpen(m));
   if ((filter === 'all' || filter === 'knockout') && pendingKO.length > 0 && !isAdmin) {
-    html += `<div class="notice notice-orange" style="margin-bottom:16px">⏳ ${pendingKO.length} knockoutwedstrijd(en) staan nog niet open — de beheerder vult de teams in zodra de vorige ronde gespeeld is.</div>`;
+    html += `<div class="notice notice-orange" style="margin-bottom:16px">⏳ ${pendingKO.length} knockout match(es) are not yet open — the admin will fill in the teams once the previous round is played.</div>`;
   }
 
   groups.forEach(grp => {
     const gMatches = matches.filter(m => m.group === grp);
     if (!gMatches.length) return;
-    const label = grp === 'knockout' ? 'Knockout' : 'Groep ' + grp;
+    const label = grp === 'knockout' ? 'Knockout' : 'Group ' + grp;
     html += `<div class="group-section"><div class="group-header">${label}</div>`;
     let lastRound = '';
     gMatches.forEach(m => {
       const km = m.group === 'knockout' ? getKOMatch(m) : m;
       if (!km.teamsSet && m.group === 'knockout') {
         if (m.round !== lastRound) { html += `<div class="round-label">${m.round}</div>`; lastRound = m.round; }
-        html += `<div class="match-card pending"><div class="match-meta">${m.date}</div><div class="pending-tag">⏳ Wacht op teams van beheerder</div></div>`;
+        html += `<div class="match-card pending"><div class="match-meta">${m.date}</div><div class="pending-tag">⏳ Waiting for admin to fill in teams</div></div>`;
         return;
       }
       const pick = myPicks[m.id];
@@ -627,20 +640,20 @@ function renderMatches() {
       const away = km.away || m.away;
       if (m.round && m.round !== lastRound) { html += `<div class="round-label">${m.round}</div>`; lastRound = m.round; }
       html += `<div class="match-card${locked?' locked':''}">`;
-      html += `<div class="match-meta">${m.date}${result ? ' · Uitslag: <strong>'+(result==='1'?home:result==='2'?away:'Gelijkspel')+'</strong>' : ''}</div>`;
+      html += `<div class="match-meta">${m.date}${result ? ' · Result: <strong>'+(result==='1'?home:result==='2'?away:'Draw')+'</strong>' : ''}</div>`;
       html += `<div class="match-teams"><span class="team">${home}</span><span class="vs">vs</span><span class="team right">${away}</span></div>`;
       html += `<div class="match-buttons">`;
-      html += `<button class="pick-btn${pick==='1'?' selected-1':''}" ${locked?'disabled':''} onclick="setPick(${m.id},'1')">${home} wint</button>`;
-      html += `<button class="pick-btn${pick==='x'?' selected-x':''}" ${locked?'disabled':''} onclick="setPick(${m.id},'x')">Gelijkspel</button>`;
-      html += `<button class="pick-btn${pick==='2'?' selected-2':''}" ${locked?'disabled':''} onclick="setPick(${m.id},'2')">${away} wint</button>`;
+      html += `<button class="pick-btn${pick==='1'?' selected-1':''}" ${locked?'disabled':''} onclick="setPick(${m.id},'1')">${home} wins</button>`;
+      html += `<button class="pick-btn${pick==='x'?' selected-x':''}" ${locked?'disabled':''} onclick="setPick(${m.id},'x')">Draw</button>`;
+      html += `<button class="pick-btn${pick==='2'?' selected-2':''}" ${locked?'disabled':''} onclick="setPick(${m.id},'2')">${away} wins</button>`;
       html += `</div>`;
-      if (locked && !pick) html += `<div class="locked-tag">Geen voorspelling ingevoerd</div>`;
-      if (correct !== null) html += `<div class="correct-tag ${correct?'yes':'no'}">${correct?'✓ Goed':'✗ Fout'}</div>`;
+      if (locked && !pick) html += `<div class="locked-tag">No prediction entered</div>`;
+      if (correct !== null) html += `<div class="correct-tag ${correct?'yes':'no'}">${correct?'✓ Correct':'✗ Wrong'}</div>`;
       html += `</div>`;
     });
     html += `</div>`;
   });
-  if (!html) html = '<p style="color:var(--text-muted);text-align:center;padding:40px 0">Niets te vinden hier 🎉</p>';
+  if (!html) html = '<p style="color:var(--text-muted);text-align:center;padding:40px 0">Nothing to find here 🎉</p>';
   document.getElementById('matchList').innerHTML = html;
   updateStats();
 }
@@ -723,10 +736,10 @@ function renderBonus() {
         });
         const myDiff = myAns ? Math.abs(parseInt(myAns) - target) : Infinity;
         const won = myAns && myDiff === minDiff;
-        statusHtml = `<div class="correct-tag ${won?'yes':'no'}" style="margin-top:6px">${won?'✓ Dichtstbij! +'+q.points+' pt':'✗ Niet dichtstbij · Antwoord: '+correct}</div>`;
+        statusHtml = `<div class="correct-tag ${won?'yes':'no'}" style="margin-top:6px">${won?'✓ Closest! +'+q.points+' pt':'✗ Not closest · Answer: '+correct}</div>`;
       } else {
         const ok = myAns && myAns.trim().toLowerCase() === correct.trim().toLowerCase();
-        statusHtml = `<div class="correct-tag ${ok?'yes':'no'}" style="margin-top:6px">${ok?'✓ Correct! +'+q.points+' pt':'✗ Fout · Antwoord: '+correct}</div>`;
+        statusHtml = `<div class="correct-tag ${ok?'yes':'no'}" style="margin-top:6px">${ok?'✓ Correct! +'+q.points+' pt':'✗ Wrong · Antwoord: '+correct}</div>`;
       }
     }
     html += `<div class="match-card" style="margin-bottom:12px">`;
@@ -735,7 +748,7 @@ function renderBonus() {
     html += `<div style="font-size:0.78rem;color:var(--text-muted);font-weight:600">+${q.points} pt${q.note?' · '+q.note:''}</div>`;
     html += `</div>`;
     if (locked && !myAns) {
-      html += `<div style="color:var(--text-muted);font-size:0.85rem;font-style:italic">Geen antwoord ingevoerd</div>`;
+      html += `<div style="color:var(--text-muted);font-size:0.85rem;font-style:italic">No answer entered</div>`;
     } else if (locked) {
       html += `<div style="font-size:0.95rem;padding:9px 12px;background:var(--gray-light);border-radius:7px;color:var(--text-muted)">${myAns}</div>`;
     } else {
@@ -761,7 +774,7 @@ function renderRanking() {
   users.forEach((u,i) => {
     const rc = i===0?'gold':i===1?'silver':i===2?'bronze':'';
     const isMe = u.key === currentUser;
-    html += `<div class="ranking-row${isMe?' me':''}"><div class="rank-num ${rc}">${i+1}</div><div style="flex:1"><div class="rank-name">${u.name}${isMe?' (jij)':''}</div><div class="rank-detail">${u.matchPts} wedstr. · ${u.bonusPts} bonus · ${u.filled} ingev.</div></div><div class="rank-pts">${u.pts} pt</div></div>`;
+    html += `<div class="ranking-row${isMe?' me':''}"><div class="rank-num ${rc}">${i+1}</div><div style="flex:1"><div class="rank-name">${u.name}${isMe?' (jij)':''}</div><div class="rank-detail">${u.matchPts} matches · ${u.bonusPts} bonus · ${u.filled} filled</div></div><div class="rank-pts">${u.pts} pt</div></div>`;
   });
   document.getElementById('rankingList').innerHTML = html;
 }
@@ -772,7 +785,7 @@ function renderAdminKnockout() {
   const el = document.getElementById('knockoutPendingCount');
   if (pending.length > 0) {
     el.style.display = '';
-    el.textContent = `${pending.length} knockoutwedstrijd(en) wachten nog op teams. Vul ze hieronder in zodra de vorige ronde gespeeld is.`;
+    el.textContent = `${pending.length} knockout match(es) still waiting for teams. Fill them in below once the previous round is played.`;
   } else { el.style.display = 'none'; }
 
   let lastRound = '', html = '';
@@ -789,8 +802,8 @@ function renderAdminKnockout() {
       if (!result) html += `<button class="result-btn teams-btn" onclick="openModal(${m.id})">✏️ Teams</button>`;
       if (result) html += `<button class="result-btn" onclick="clearResult(${m.id})">✕</button>`;
     } else {
-      html += `<div class="result-teams" style="color:var(--orange-text)">${m.date} — ${m.round} · nog geen teams</div>`;
-      html += `<button class="result-btn teams-btn" onclick="openModal(${m.id})">+ Teams invullen</button>`;
+      html += `<div class="result-teams" style="color:var(--orange-text)">${m.date} — ${m.round} · no teams yet</div>`;
+      html += `<button class="result-btn teams-btn" onclick="openModal(${m.id})">+ Enter teams</button>`;
     }
     html += `</div>`;
   });
@@ -801,8 +814,8 @@ window.openModal = function(matchId) {
   modalMatchId = matchId;
   const m = KNOCKOUT_MATCHES.find(x => x.id === matchId);
   const existing = shared.knockoutTeams[matchId];
-  document.getElementById('modalTitle').textContent = `Teams invullen — ${m.round} (${m.date})`;
-  document.getElementById('modalDesc').textContent = 'Zodra je opslaat, kunnen deelnemers deze wedstrijd voorspellen.';
+  document.getElementById('modalTitle').textContent = `Enter teams — ${m.round} (${m.date})`;
+  document.getElementById('modalDesc').textContent = 'Once saved, participants can predict this match.';
   document.getElementById('modalHome').value = existing ? existing.home : '';
   document.getElementById('modalAway').value = existing ? existing.away : '';
   document.getElementById('teamModal').style.display = 'flex';
@@ -817,7 +830,7 @@ window.closeModal = function() {
 window.saveTeams = async function() {
   const home = document.getElementById('modalHome').value.trim();
   const away = document.getElementById('modalAway').value.trim();
-  if (!home || !away) { alert("Vul beide teamnamen in."); return; }
+  if (!home || !away) { alert("Please fill in both team names."); return; }
   await fbSet(`/knockoutTeams/${modalMatchId}`, { home, away });
   closeModal();
 }
@@ -856,9 +869,9 @@ function renderAdminUsers() {
   users.forEach(k => {
     const u = shared.users[k];
     const pts = calcPoints(k);
-    html += `<div class="admin-user-row"><div style="flex:1">${u.name} <span class="badge ${u.isAdmin?'badge-admin':'badge-user'}">${u.isAdmin?'beheerder':'deelnemer'}</span></div><div style="font-size:0.8rem;color:var(--text-muted)">${Object.keys(shared.picks[k]||{}).length} inv. · ${pts} pt</div></div>`;
+    html += `<div class="admin-user-row"><div style="flex:1">${u.name} <span class="badge ${u.isAdmin?'badge-admin':'badge-user'}">${u.isAdmin?'admin':'participant'}</span></div><div style="font-size:0.8rem;color:var(--text-muted)">${Object.keys(shared.picks[k]||{}).length} inv. · ${pts} pt</div></div>`;
   });
-  document.getElementById('adminUserList').innerHTML = html || '<div style="padding:14px;color:var(--text-muted);font-size:0.85rem">Nog geen deelnemers.</div>';
+  document.getElementById('adminUserList').innerHTML = html || '<div style="padding:14px;color:var(--text-muted);font-size:0.85rem">Nog geen participants.</div>';
 }
 
 function renderShareInfo() {
@@ -867,21 +880,21 @@ function renderShareInfo() {
 }
 
 window.copyLink = function() {
-  navigator.clipboard.writeText(window.location.href).then(() => alert("Link gekopieerd!"));
+  navigator.clipboard.writeText(window.location.href).then(() => alert("Link copied!"));
 }
 
 function renderAdminBonus() {
   const locked = isBonusLocked();
   let html = '';
   html += `<div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;padding:12px 14px;background:var(--white);border:1px solid var(--gray-border);border-radius:var(--radius)">`;
-  html += `<div style="flex:1;font-size:0.88rem"><strong>Status bonusvragen:</strong> ${locked ? '🔒 Gesloten' : '🟢 Open'}</div>`;
-  html += `<button class="btn btn-sm btn-outline" onclick="toggleBonusLock()">${locked ? 'Heropenen' : 'Nu sluiten'}</button>`;
+  html += `<div style="flex:1;font-size:0.88rem"><strong>Bonus question status:</strong> ${locked ? '🔒 Closed' : '🟢 Open'}</div>`;
+  html += `<button class="btn btn-sm btn-outline" onclick="toggleBonusLock()">${locked ? 'Reopen' : 'Close now'}</button>`;
   html += `</div>`;
   BONUS_QUESTIONS.forEach(q => {
     const correct = shared.bonusCorrect[q.id] || '';
     html += `<div class="result-row" style="flex-wrap:wrap;gap:10px;margin-bottom:8px">`;
     html += `<div style="flex:1;min-width:160px;font-size:0.88rem;font-weight:500">${q.label} <span style="color:var(--text-muted);font-weight:400">(+${q.points} pt)</span></div>`;
-    html += `<input type="${q.type}" value="${correct}" placeholder="Vul correct antwoord in"
+    html += `<input type="${q.type}" value="${correct}" placeholder="Enter correct answer"
       style="flex:1;min-width:140px;padding:7px 10px;border:1.5px solid var(--gray-border);border-radius:7px;font-size:0.85rem;outline:none"
       oninput="setBonusCorrect('${q.id}', this.value)"
       onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--gray-border)'" />`;
@@ -899,7 +912,7 @@ window.setBonusCorrect = async function(qid, val) {
 }
 
 window.resetPoule = async function() {
-  if (!confirm("Weet je zeker dat je alles wilt resetten? Alle voorspellingen en uitslagen worden verwijderd.")) return;
+  if (!confirm("Are you sure you want to reset everything? All predictions and results will be deleted.")) return;
   await fbSet('/', { adminPass: shared.adminPass, users: {}, picks: {}, results: {}, knockoutTeams: {}, bonusAnswers: {}, bonusCorrect: {}, bonusLocked: false });
   logout();
 }
@@ -917,3 +930,6 @@ if (savedUser) {
 </script>
 </body>
 </html>
+
+
+

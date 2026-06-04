@@ -705,7 +705,13 @@ function lockLabel(matchId) {
 window.setPick = async function(matchId, pick) {
   if (shared.results[matchId]) { alert("This match has already been played."); return; }
   if (isMatchLocked(matchId)) { alert("Predictions for this round are now locked."); return; }
-  await fbSet(`/picks/${currentUser}/${matchId}`, pick);
+  const currentPick = (shared.picks[currentUser] || {})[matchId];
+  if (currentPick === pick) {
+    // Clicking same button again removes the prediction
+    await fbRemove(`/picks/${currentUser}/${matchId}`);
+  } else {
+    await fbSet(`/picks/${currentUser}/${matchId}`, pick);
+  }
 }
 
 // ---- RENDER MATCHES ----

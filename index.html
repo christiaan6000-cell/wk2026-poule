@@ -613,12 +613,17 @@ window.doLogin = async function() {
       if (pin !== existingUser.pin) { err.textContent = "Wrong PIN."; return; }
     }
   } else {
+    // Double-check with fresh Firebase data that name is truly not taken
+    const checkSnap = await get(ref(db, `/users/${key}`));
+    if (checkSnap.exists()) {
+      err.textContent = "This name is already taken. Please choose a different name."; return;
+    }
     // New user — set PIN
     const pinSet = document.getElementById('loginPinSet').value;
     if (!pinSet || pinSet.length !== 4 || !/^[0-9]{4}$/.test(pinSet)) {
       err.textContent = "Please choose a 4-digit PIN (numbers only)."; return;
     }
-    await fbSet(`/users/${key}`, { name, isAdmin: false, pin: pinSet });
+    await fbSet(`/users/${key}`, { name, pin: pinSet });
     if (!shared.picks[key]) await fbSet(`/picks/${key}`, {});
   }
 
@@ -811,9 +816,18 @@ function isBonusLocked() {
   return shared.bonusLocked || new Date() >= new Date('2026-06-11T19:00:00Z');
 }
 
-window.setBonusAnswer = async function(qid, val) {
+// Debounce timers for bonus answers
+const bonusDebounceTimers = {};
+let bonusTypingField = null; // track which field is being typed in
+
+window.setBonusAnswer = function(qid, val) {
   if (isBonusLocked()) return;
-  await fbSet(`/bonusAnswers/${currentUser}/${qid}`, val);
+  bonusTypingField = qid;
+  clearTimeout(bonusDebounceTimers[qid]);
+  bonusDebounceTimers[qid] = setTimeout(async () => {
+    await fbSet(`/bonusAnswers/${currentUser}/${qid}`, val);
+    bonusTypingField = null;
+  }, 800);
 }
 
 function calcBonusPoints(userKey) {
@@ -850,6 +864,8 @@ function calcPoints(userKey) {
 }
 
 function renderBonus() {
+  // Don't re-render while user is typing — it would deselect their input
+  if (bonusTypingField !== null) return;
   const locked = isBonusLocked();
   const myAnswers = shared.bonusAnswers[currentUser] || {};
   document.getElementById('bonusLockedNotice').style.display = locked ? '' : 'none';
@@ -1029,6 +1045,7 @@ window.copyLink = function() {
 }
 
 function renderAdminBonus() {
+  if (bonusCorrectTyping !== null) return;
   const locked = isBonusLocked();
   let html = '';
   html += `<div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;padding:12px 14px;background:var(--white);border:1px solid var(--gray-border);border-radius:var(--radius)">`;
@@ -1084,8 +1101,16 @@ window.toggleBonusLock = async function() {
   await fbSet('/bonusLocked', !isBonusLocked());
 }
 
-window.setBonusCorrect = async function(qid, val) {
-  await fbSet(`/bonusCorrect/${qid}`, val);
+const bonusCorrectDebounce = {};
+let bonusCorrectTyping = null;
+
+window.setBonusCorrect = function(qid, val) {
+  bonusCorrectTyping = qid;
+  clearTimeout(bonusCorrectDebounce[qid]);
+  bonusCorrectDebounce[qid] = setTimeout(async () => {
+    await fbSet(`/bonusCorrect/${qid}`, val);
+    bonusCorrectTyping = null;
+  }, 800);
 }
 
 window.resetPoule = async function() {

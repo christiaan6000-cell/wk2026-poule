@@ -613,9 +613,9 @@ window.doLogin = async function() {
   }
 
   currentUser = key;
-  isAdmin = (shared.users[key] && shared.users[key].isAdmin) || false;
+  // Don't read isAdmin here - enterApp() always reads it fresh from shared.users
   sessionStorage.setItem('wk2026_user', key);
-  sessionStorage.setItem('wk2026_admin', isAdmin ? '1' : '0');
+  sessionStorage.setItem('wk2026_admin', '0'); // will be updated by enterApp()
   enterApp();
 }
 

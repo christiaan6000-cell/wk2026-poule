@@ -227,19 +227,7 @@
       <div style="font-size:0.8rem;color:var(--text-muted);margin-bottom:5px" id="progressLabel">0 of 72 filled in</div>
       <div class="progress-bar-bg"><div class="progress-bar" id="progressBar" style="width:0%"></div></div>
     </div>
-    <div style="display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap">
-      <select id="filterGroup" onchange="activeFilter = this.value; renderMatches()">
-        <option value="all">All matches</option>
-        <option value="open">Still to fill in</option>
-        <option value="A">Group A</option><option value="B">Group B</option>
-        <option value="C">Group C</option><option value="D">Group D</option>
-        <option value="E">Group E</option><option value="F">Group F</option>
-        <option value="G">Group G</option><option value="H">Group H</option>
-        <option value="I">Group I</option><option value="J">Group J</option>
-        <option value="K">Group K</option><option value="L">Group L</option>
-        <option value="knockout">Knockout</option>
-      </select>
-    </div>
+
     <div id="matchList"></div>
   </div>
 
@@ -735,19 +723,13 @@ window.setPick = async function(matchId, pick) {
 
 // ---- RENDER MATCHES ----
 function renderMatches() {
-  // Sync dropdown to activeFilter (in case it was reset by re-render)
-  const filterEl = document.getElementById('filterGroup');
-  if (filterEl && filterEl.value !== activeFilter) filterEl.value = activeFilter;
-  const filter = activeFilter;
   const myPicks = getMyPicks();
-  const avail = availableMatches();
-
-  let matches;
-  if (filter === 'open') matches = avail.filter(m => !myPicks[m.id] && !shared.results[m.id]);
-  else if (filter === 'all') matches = avail;
-  else if (filter === 'knockout') matches = KNOCKOUT_MATCHES.map(m => isKOOpen(m) ? getKOMatch(m) : {...m, group:'knockout', home:null, away:null, teamsSet:false});
-  else matches = GROUP_MATCHES.filter(m => m.group === filter);
-
+  // Show all group matches + open knockout matches
+  const matches = [
+    ...GROUP_MATCHES,
+    ...KNOCKOUT_MATCHES.map(m => isKOOpen(m) ? getKOMatch(m) : {...m, group:'knockout', home:null, away:null, teamsSet:false})
+  ];
+  const filter = 'all'; // filter removed
   const groups = [...new Set(matches.map(m => m.group))];
   let html = '';
 
@@ -954,8 +936,9 @@ function renderAdminKnockout() {
       html += `<button class="result-btn${result==='1'?' active-1':''}" onclick="setResult(${m.id},'1')">${teams.home}</button>`;
       html += `<button class="result-btn${result==='x'?' active-x':''}" onclick="setResult(${m.id},'x')">X</button>`;
       html += `<button class="result-btn${result==='2'?' active-2':''}" onclick="setResult(${m.id},'2')">${teams.away}</button>`;
-      if (!result) html += `<button class="result-btn teams-btn" onclick="openModal(${m.id})">✏️ Teams</button>`;
-      if (result) html += `<button class="result-btn" onclick="clearResult(${m.id})">✕</button>`;
+      html += `<button class="result-btn teams-btn" onclick="openModal(${m.id})">✏️ Edit teams</button>`;
+      if (result) html += `<button class="result-btn" onclick="clearResult(${m.id})" title="Clear result">✕ Result</button>`;
+      if (!result) html += `<button class="result-btn btn-danger" onclick="clearTeams(${m.id})" title="Remove teams" style="background:#fee2e2;border-color:#dc2626;color:#991b1b">✕ Teams</button>`;
     } else {
       html += `<div class="result-teams" style="color:var(--orange-text)">${m.date} — ${m.round} · no teams yet</div>`;
       html += `<button class="result-btn teams-btn" onclick="openModal(${m.id})">+ Enter teams</button>`;
@@ -1015,6 +998,17 @@ window.setResult = async function(matchId, result) {
 
 window.clearResult = async function(matchId) {
   await fbRemove(`/results/${matchId}`);
+}
+
+window.clearTeams = async function(matchId) {
+  if (!confirm("Remove the teams for this match? Participants' predictions for this match will also be removed.")) return;
+  await fbRemove(`/knockoutTeams/${matchId}`);
+  await fbRemove(`/results/${matchId}`);
+  // Remove all picks for this match
+  const users = Object.keys(shared.users);
+  for (const u of users) {
+    if ((shared.picks[u] || {})[matchId]) await fbRemove(`/picks/${u}/${matchId}`);
+  }
 }
 
 function renderAdminUsers() {

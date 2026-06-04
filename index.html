@@ -520,8 +520,12 @@ onValue(ref(db, '/'), (snapshot) => {
   if (currentUser) {
     const activeTab = document.querySelector('.tab.active');
     if (activeTab) {
-      const tabMap = {'Voorspellingen':'predictions','Bonusvragen':'bonus','Ranglijst':'ranking','Beheer':'admin'};
-      const tab = tabMap[activeTab.textContent.trim()];
+      const tabText = activeTab.textContent.trim().toLowerCase();
+      let tab = null;
+      if (tabText.includes('predict')) tab = 'predictions';
+      else if (tabText.includes('bonus')) tab = 'bonus';
+      else if (tabText.includes('stand') || tabText.includes('rang')) tab = 'ranking';
+      else if (tabText.includes('admin') || tabText.includes('beh')) tab = 'admin';
       if (tab === 'predictions') { renderMatches(); updateStats(); }
       else if (tab === 'bonus') renderBonus();
       else if (tab === 'ranking') renderRanking();

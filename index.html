@@ -557,7 +557,7 @@ window.startNewPoule = async function() {
     alert("A pool with a different password already exists."); return;
   }
 
-  const key = name.trim().toLowerCase().replace(/[.#$\/[\]]/g, '_');
+  const key = name.trim().toLowerCase().replace(/[.#$\/ \[\]]/g, '_');
   if (!shared.adminPass) await fbSet('/adminPass', pass);
   await fbSet(`/users/${key}`, { name: name.trim(), isAdmin: true, pin });
   if (!shared.picks[key]) await fbSet(`/picks/${key}`, {});
@@ -571,7 +571,7 @@ window.startNewPoule = async function() {
 // Show/hide PIN field based on whether user already exists
 window.checkExistingUser = function() {
   const name = document.getElementById('loginName').value.trim();
-  const key = name.toLowerCase().replace(/[.#$\/[\]]/g, '_');
+  const key = name.toLowerCase().replace(/[.#$\/ \[\]]/g, '_');
   const exists = shared.users && shared.users[key];
   document.getElementById('pinGroup').style.display = exists ? '' : 'none';
   document.getElementById('pinSetGroup').style.display = (!exists && name.length > 0) ? '' : 'none';
@@ -585,14 +585,23 @@ window.doLogin = async function() {
   if (!shared.adminPass) { err.textContent = "No pool has been created yet. Ask the admin."; return; }
   if (pass !== shared.adminPass) { err.textContent = "Wrong password."; return; }
 
-  const key = name.toLowerCase().replace(/[.#$\/[\]]/g, '_');
+  const key = name.toLowerCase().replace(/[.#$\/ \[\]]/g, '_');
   const existingUser = shared.users && shared.users[key];
 
   if (existingUser) {
-    // Existing user — check PIN
-    const pin = document.getElementById('loginPin').value;
-    if (!pin || pin.length !== 4) { err.textContent = "Please enter your 4-digit PIN."; return; }
-    if (pin !== existingUser.pin) { err.textContent = "Wrong PIN."; return; }
+    if (!existingUser.pin) {
+      // Legacy account without PIN — set one now
+      const pinSet = document.getElementById('loginPinSet').value;
+      if (!pinSet || pinSet.length !== 4 || !/^[0-9]{4}$/.test(pinSet)) {
+        err.textContent = "This account has no PIN yet. Please choose a 4-digit PIN."; return;
+      }
+      await fbSet(`/users/${key}/pin`, pinSet);
+    } else {
+      // Existing user — check PIN
+      const pin = document.getElementById('loginPin').value;
+      if (!pin || pin.length !== 4) { err.textContent = "Please enter your 4-digit PIN."; return; }
+      if (pin !== existingUser.pin) { err.textContent = "Wrong PIN."; return; }
+    }
   } else {
     // New user — set PIN
     const pinSet = document.getElementById('loginPinSet').value;
@@ -778,7 +787,10 @@ function updateStats() {
 }
 
 // ---- BONUS ----
-function isBonusLocked() { return shared.bonusLocked || false; }
+function isBonusLocked() {
+  // Auto-lock at June 11 21:00 CEST (19:00 UTC), or if manually locked by admin
+  return shared.bonusLocked || new Date() >= new Date('2026-06-11T19:00:00Z');
+}
 
 window.setBonusAnswer = async function(qid, val) {
   if (isBonusLocked()) return;
@@ -970,7 +982,7 @@ function renderAdminUsers() {
   users.forEach(k => {
     const u = shared.users[k];
     const pts = calcPoints(k);
-    html += `<div class="admin-user-row"><div style="flex:1">${u.name} <span class="badge ${u.isAdmin?'badge-admin':'badge-user'}">${u.isAdmin?'admin':'participant'}</span></div><div style="font-size:0.8rem;color:var(--text-muted)">${Object.keys(shared.picks[k]||{}).length} inv. · ${pts} pt</div></div>`;
+    html += `<div class="admin-user-row"><div style="flex:1">${u.name} <span class="badge ${u.isAdmin?'badge-admin':'badge-user'}">${u.isAdmin?'admin':'participant'}</span></div><div style="font-size:0.8rem;color:var(--text-muted)">${Object.keys(shared.picks[k]||{}).length} filled · ${pts} pts</div></div>`;
   });
   document.getElementById('adminUserList').innerHTML = html || '<div style="padding:14px;color:var(--text-muted);font-size:0.85rem">No participants yet.</div>';
 }

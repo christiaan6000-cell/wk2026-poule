@@ -211,6 +211,7 @@
   <div class="app-body">
   <div class="tabs">
     <div class="tab active" onclick="showTab('predictions')">Predictions</div>
+    <div class="tab" onclick="showTab('knockout')">Knockout</div>
     <div class="tab" onclick="showTab('bonus')">Bonus questions</div>
     <div class="tab" onclick="showTab('ranking')">Standings</div>
     <div class="tab" id="adminTab" style="display:none" onclick="showTab('admin')">Admin</div>
@@ -229,6 +230,11 @@
     </div>
 
     <div id="matchList"></div>
+  </div>
+
+  <div id="tab-knockout" style="display:none">
+    <div class="notice notice-blue" style="margin-bottom:16px">Knockout predictions are available once the admin fills in the teams for each round.</div>
+    <div id="knockoutMatchList"></div>
   </div>
 
   <div id="tab-bonus" style="display:none">
@@ -526,10 +532,12 @@ onValue(ref(db, '/'), (snapshot) => {
         const tabText = activeTab.textContent.trim().toLowerCase();
         let tab = null;
         if (tabText.includes('predict')) tab = 'predictions';
+        else if (tabText.includes('knockout')) tab = 'knockout';
         else if (tabText.includes('bonus')) tab = 'bonus';
         else if (tabText.includes('stand')) tab = 'ranking';
         else if (tabText.includes('admin')) tab = 'admin';
         if (tab === 'predictions') { renderMatches(); updateStats(); }
+        else if (tab === 'knockout') renderKnockout();
         else if (tab === 'bonus') renderBonus();
         else if (tab === 'ranking') renderRanking();
         else if (tab === 'admin') { renderAdminKnockout(); renderAdminGroupMatches(); renderAdminUsers(); renderShareInfo(); renderAdminBonus(); }
@@ -653,15 +661,16 @@ window.showScreen = function(id) {
 
 window.showTab = function(tab) {
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  ['predictions','bonus','ranking','admin'].forEach(t => {
+  ['predictions','knockout','bonus','ranking','admin'].forEach(t => {
     const el = document.getElementById('tab-'+t); if(el) el.style.display = 'none';
   });
   document.getElementById('tab-'+tab).style.display = '';
   document.querySelectorAll('.tab').forEach(t => {
-    const mapEN = {predictions:'predict', bonus:'bonus', ranking:'stand', admin:'admin'};
-    if (t.textContent.toLowerCase().includes(mapEN[tab])) t.classList.add('active');
+    const mapEN = {predictions:'predict', knockout:'knockout', bonus:'bonus', ranking:'stand', admin:'admin'};
+    if (mapEN[tab] && t.textContent.toLowerCase().includes(mapEN[tab])) t.classList.add('active');
   });
   if (tab === 'predictions') renderMatches();
+  if (tab === 'knockout') renderKnockout();
   if (tab === 'bonus') renderBonus();
   if (tab === 'ranking') renderRanking();
   if (tab === 'admin') { renderAdminKnockout(); renderAdminGroupMatches(); renderAdminUsers(); renderShareInfo(); renderAdminBonus(); }
@@ -669,6 +678,45 @@ window.showTab = function(tab) {
 
 // ---- PICKS ----
 function getMyPicks() { return shared.picks[currentUser] || {}; }
+
+function renderKnockout() {
+  const myPicks = getMyPicks();
+  const matches = KNOCKOUT_MATCHES.map(m => isKOOpen(m) ? getKOMatch(m) : {...m, group:'knockout', home:null, away:null, teamsSet:false});
+  let html = '';
+  let lastRound = '';
+  const pendingKO = KNOCKOUT_MATCHES.filter(m => !isKOOpen(m));
+  if (pendingKO.length > 0) {
+    html += `<div class="notice notice-orange" style="margin-bottom:16px">⏳ ${pendingKO.length} knockout match(es) are not yet open — the admin will fill in the teams once the previous round is played.</div>`;
+  }
+  matches.forEach(m => {
+    const km = m.group === 'knockout' ? getKOMatch(m) : m;
+    if (m.round && m.round !== lastRound) { html += `<div class="round-label">${m.round}</div>`; lastRound = m.round; }
+    if (!km.teamsSet) {
+      html += `<div class="match-card pending"><div class="match-meta">${m.date} · ${m.round}</div><div class="pending-tag">⏳ Waiting for admin to fill in teams</div></div>`;
+      return;
+    }
+    const pick = myPicks[m.id];
+    const result = shared.results[m.id];
+    const locked = !!result || isMatchLocked(m.id);
+    let correct = null;
+    if (result && pick) correct = pick === result;
+    const home = km.home;
+    const away = km.away;
+    html += `<div class="match-card${locked?' locked':''}">`;
+    html += `<div class="match-meta">${m.date}${result ? ' · Result: <strong>'+(result==='1'?home:result==='2'?away:'Draw')+'</strong>' : ''}</div>`;
+    html += `<div class="match-teams"><span class="team">${home}</span><span class="vs">vs</span><span class="team right">${away}</span></div>`;
+    html += `<div class="match-buttons">`;
+    html += `<button class="pick-btn${pick==='1'?' selected-1':''}" ${locked?'disabled':''} onclick="setPick(${m.id},'1')">${home} wins</button>`;
+    html += `<button class="pick-btn${pick==='x'?' selected-x':''}" ${locked?'disabled':''} onclick="setPick(${m.id},'x')">Draw</button>`;
+    html += `<button class="pick-btn${pick==='2'?' selected-2':''}" ${locked?'disabled':''} onclick="setPick(${m.id},'2')">${away} wins</button>`;
+    html += `</div>`;
+    if (locked && !pick) html += `<div class="locked-tag">${result ? 'No prediction entered' : lockLabel(m.id)}</div>`;
+    if (correct !== null) html += `<div class="correct-tag ${correct?'yes':'no'}">${correct?'✓ Correct':'✗ Wrong'}</div>`;
+    html += `</div>`;
+  });
+  if (!html) html = '<p style="color:var(--text-muted);text-align:center;padding:40px 0">No knockout matches yet 🎉</p>';
+  document.getElementById('knockoutMatchList').innerHTML = html;
+}
 
 function getKOMatch(m) {
   const teams = shared.knockoutTeams[m.id];
@@ -724,12 +772,8 @@ window.setPick = async function(matchId, pick) {
 // ---- RENDER MATCHES ----
 function renderMatches() {
   const myPicks = getMyPicks();
-  // Show all group matches + open knockout matches
-  const matches = [
-    ...GROUP_MATCHES,
-    ...KNOCKOUT_MATCHES.map(m => isKOOpen(m) ? getKOMatch(m) : {...m, group:'knockout', home:null, away:null, teamsSet:false})
-  ];
-  const filter = 'all'; // filter removed
+  const matches = [...GROUP_MATCHES];
+  const filter = 'all';
   const groups = [...new Set(matches.map(m => m.group))];
   let html = '';
 
@@ -780,7 +824,7 @@ function renderMatches() {
 
 function updateStats() {
   const myPicks = getMyPicks();
-  const avail = availableMatches();
+  const avail = GROUP_MATCHES; // stats only for group stage on predictions tab
   const done = avail.filter(m => myPicks[m.id]).length;
   const openCount = avail.filter(m => !myPicks[m.id] && !shared.results[m.id]).length;
   let pts = 0, correct = 0, total = 0;

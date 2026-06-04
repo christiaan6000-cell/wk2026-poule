@@ -224,7 +224,7 @@
       <div class="stat-card"><div class="num" id="statCorrect">—</div><div class="lbl">Correct %</div></div>
     </div>
     <div style="margin-bottom:14px">
-      <div style="font-size:0.8rem;color:var(--text-muted);margin-bottom:5px" id="progressLabel">0 van 72 ingevuld</div>
+      <div style="font-size:0.8rem;color:var(--text-muted);margin-bottom:5px" id="progressLabel">0 of 72 filled in</div>
       <div class="progress-bar-bg"><div class="progress-bar" id="progressBar" style="width:0%"></div></div>
     </div>
     <div style="display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap">
@@ -312,7 +312,7 @@
 
   </div><!-- /app-body -->
 
-<!-- MODAL: teams invullen voor knockoutwedstrijd -->
+<!-- MODAL: enter teams for knockout match -->
 <div id="teamModal" class="modal-bg" style="display:none">
   <div class="modal">
     <h3 id="modalTitle">Enter teams</h3>
@@ -773,7 +773,7 @@ function updateStats() {
   document.getElementById('statLeft').textContent = openCount;
   document.getElementById('statPoints').textContent = pts;
   document.getElementById('statCorrect').textContent = total > 0 ? Math.round(correct/total*100)+'%' : '—';
-  document.getElementById('progressLabel').textContent = done + ' van ' + avail.length + ' ingevuld';
+  document.getElementById('progressLabel').textContent = done + ' of ' + avail.length + ' filled in';
   document.getElementById('progressBar').style.width = avail.length > 0 ? (done/avail.length*100)+'%' : '0%';
 }
 
@@ -972,7 +972,7 @@ function renderAdminUsers() {
     const pts = calcPoints(k);
     html += `<div class="admin-user-row"><div style="flex:1">${u.name} <span class="badge ${u.isAdmin?'badge-admin':'badge-user'}">${u.isAdmin?'admin':'participant'}</span></div><div style="font-size:0.8rem;color:var(--text-muted)">${Object.keys(shared.picks[k]||{}).length} inv. · ${pts} pt</div></div>`;
   });
-  document.getElementById('adminUserList').innerHTML = html || '<div style="padding:14px;color:var(--text-muted);font-size:0.85rem">Nog geen participants.</div>';
+  document.getElementById('adminUserList').innerHTML = html || '<div style="padding:14px;color:var(--text-muted);font-size:0.85rem">No participants yet.</div>';
 }
 
 function renderShareInfo() {

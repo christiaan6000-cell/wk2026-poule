@@ -734,7 +734,7 @@ function isMatchLocked(matchId) {
   // Group stage (ids 1-72): lock June 11 21:00 CEST = 19:00 UTC
   if (matchId <= 72) return now >= new Date('2026-06-11T19:00:00Z');
   // Round of 32 (ids 73-88): lock June 27 21:00 CEST = 19:00 UTC
-  if (matchId <= 88) return now >= new Date('2026-06-27T19:00:00Z');
+  if (matchId <= 88) return now >= new Date('2026-06-28T19:00:00Z');
   // Round of 16 (ids 89-96): lock July 4 19:00 CEST = 17:00 UTC
   if (matchId <= 96) return now >= new Date('2026-07-04T17:00:00Z');
   // Quarter-finals (ids 97-100): lock July 9 22:00 CEST = 20:00 UTC
@@ -749,7 +749,7 @@ function isMatchLocked(matchId) {
 
 function lockLabel(matchId) {
   if (matchId <= 72) return '🔒 Locked — group stage deadline passed (11 Jun 21:00)';
-  if (matchId <= 88) return '🔒 Locked — Round of 32 started (27 Jun 21:00)';
+  if (matchId <= 88) return '🔒 Locked — Round of 32 started (28 Jun 21:00)';
   if (matchId <= 96) return '🔒 Locked — Round of 16 started (4 Jul 19:00)';
   if (matchId <= 100) return '🔒 Locked — Quarter-finals started (9 Jul 22:00)';
   if (matchId <= 102) return '🔒 Locked — Semi-finals started (14 Jul 21:00)';
